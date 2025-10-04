@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -768,6 +767,13 @@ body::before {
     padding: 15px;
   }
 }
+
+.error-message {
+  color: #ff4444;
+  font-size: 12px;
+  margin-top: 5px;
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -783,25 +789,29 @@ body::before {
             <label>
                 <input class="input" type="text" placeholder="" required id="firstname">
                 <span>Firstname</span>
+                <div class="error-message" id="firstnameError"></div>
             </label>
 
             <label>
                 <input class="input" type="text" placeholder="" required id="lastname">
                 <span>Lastname</span>
+                <div class="error-message" id="lastnameError"></div>
             </label>
         </div>  
                 
         <label>
             <input class="input" type="email" placeholder="" required id="email">
             <span>Email</span>
+            <div class="error-message" id="emailError"></div>
         </label> 
             
         <label>
             <div class="password-container">
-                <input class="input" type="password" placeholder="" required id="password">
+                <input class="input" type="password" placeholder="" required id="password" minlength="6">
                 <button type="button" class="toggle-password" id="togglePassword">Mostra</button>
             </div>
             <span>Password</span>
+            <div class="error-message" id="passwordError"></div>
         </label>
         <label>
             <div class="password-container">
@@ -809,7 +819,9 @@ body::before {
                 <button type="button" class="toggle-password" id="toggleConfirmPassword">Mostra</button>
             </div>
             <span>Confirm password</span>
+            <div class="error-message" id="confirmPasswordError"></div>
         </label>
+        <button type="submit" class="choosePlan" style="width: 100%; margin-top: 20px;">Procedi alla Scelta del Piano</button>
         <p class="signin">Hai già un account? <a href="login.html">Accedi</a></p>
     </form>
   </div>
@@ -1017,8 +1029,101 @@ const elements = {
     togglePassword: document.getElementById("togglePassword"),
     toggleConfirmPassword: document.getElementById("toggleConfirmPassword"),
     passwordInput: document.getElementById("password"),
-    confirmPasswordInput: document.getElementById("confirmPassword")
+    confirmPasswordInput: document.getElementById("confirmPassword"),
+    
+    // Error messages
+    firstnameError: document.getElementById("firstnameError"),
+    lastnameError: document.getElementById("lastnameError"),
+    emailError: document.getElementById("emailError"),
+    passwordError: document.getElementById("passwordError"),
+    confirmPasswordError: document.getElementById("confirmPasswordError")
 };
+
+// --- VALIDAZIONE FORM ---
+function validateForm() {
+    let isValid = true;
+    
+    // Reset error messages
+    document.querySelectorAll('.error-message').forEach(el => {
+        el.style.display = 'none';
+        el.textContent = '';
+    });
+    
+    // Validate firstname
+    const firstname = document.getElementById('firstname').value.trim();
+    if (!firstname) {
+        elements.firstnameError.textContent = 'Il nome è obbligatorio';
+        elements.firstnameError.style.display = 'block';
+        isValid = false;
+    }
+    
+    // Validate lastname
+    const lastname = document.getElementById('lastname').value.trim();
+    if (!lastname) {
+        elements.lastnameError.textContent = 'Il cognome è obbligatorio';
+        elements.lastnameError.style.display = 'block';
+        isValid = false;
+    }
+    
+    // Validate email
+    const email = document.getElementById('email').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+        elements.emailError.textContent = 'L\'email è obbligatoria';
+        elements.emailError.style.display = 'block';
+        isValid = false;
+    } else if (!emailRegex.test(email)) {
+        elements.emailError.textContent = 'Inserisci un\'email valida';
+        elements.emailError.style.display = 'block';
+        isValid = false;
+    }
+    
+    // Validate password
+    const password = document.getElementById('password').value;
+    if (!password) {
+        elements.passwordError.textContent = 'La password è obbligatoria';
+        elements.passwordError.style.display = 'block';
+        isValid = false;
+    } else if (password.length < 6) {
+        elements.passwordError.textContent = 'La password deve essere di almeno 6 caratteri';
+        elements.passwordError.style.display = 'block';
+        isValid = false;
+    }
+    
+    // Validate confirm password
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    if (!confirmPassword) {
+        elements.confirmPasswordError.textContent = 'Conferma la password';
+        elements.confirmPasswordError.style.display = 'block';
+        isValid = false;
+    } else if (password !== confirmPassword) {
+        elements.confirmPasswordError.textContent = 'Le password non coincidono';
+        elements.confirmPasswordError.style.display = 'block';
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+// --- GESTIONE SUBMIT FORM ---
+elements.form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (validateForm()) {
+        // Salva i dati dell'utente
+        userData = {
+            firstname: document.getElementById('firstname').value.trim(),
+            lastname: document.getElementById('lastname').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value,
+            registrationDate: new Date().toLocaleDateString('it-IT')
+        };
+        
+        // Mostra la sezione piani
+        elements.plansSection.style.display = 'flex';
+        alert('Registrazione completata! Ora scegli il tuo piano.');
+    }
+});
 
 // --- FUNZIONI PER IL FORM ---
 elements.togglePassword.addEventListener("click", () => {
@@ -1036,6 +1141,12 @@ elements.toggleConfirmPassword.addEventListener("click", () => {
 // --- FUNZIONI PER LA SELEZIONE DEI PIANI ---
 elements.chooseButtons.forEach(btn => {
     btn.addEventListener("click", () => {
+        // Verifica che il form sia stato completato
+        if (!userData.firstname) {
+            alert("Completa prima la registrazione!");
+            return;
+        }
+        
         const planDiv = btn.parentElement;
         const planName = planDiv.getAttribute("data-plan");
         const planDescription = planDiv.getAttribute("data-description");
@@ -1297,1308 +1408,12 @@ elements.logoutBtn.addEventListener("click", () => {
 
 // Aggiorna il contatore ogni giorno
 setInterval(updateDaysRemaining, 24 * 60 * 60 * 1000);
+
+// Inizializzazione
+document.addEventListener('DOMContentLoaded', function() {
+    // Nascondi inizialmente la sezione piani
+    elements.plansSection.style.display = 'none';
+});
 </script>
 </body>
-=======
-<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registrazione FitLife</title>
-<style>
-/* --- STILI GENERALI --- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: url('https://images.unsplash.com/photo-1579758629938-03607ccdbaba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
-  background-size: cover;
-  position: relative;
-  color: #fff;
-  margin: 0;
-  padding: 20px;
-}
-
-/* Overlay scuro sullo sfondo */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  z-index: -1;
-}
-
-/* --- CONTENITORE PRINCIPALE --- */
-.container {
-  display: flex;
-  gap: 40px;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 30px;
-  max-width: 1400px;
-  width: 100%;
-  transition: all 0.5s ease;
-  position: relative;
-  z-index: 1;
-}
-
-/* --- SEZIONE FORM (SINISTRA) --- */
-.form-section {
-  width: 420px;
-  flex-shrink: 0;
-}
-
-/* Form stile login */
-.form-section .form {
-  width: 100%;
-  border-radius: 12px;
-  padding: 30px 40px;
-  text-align: center;
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(0, 16, 96, 0.336);
-  color: #ffffff;
-}
-
-.title {
-  font-size: 36px;
-  margin-bottom: 15px;
-}
-
-.message {
-  font-size: 14.5px;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.signin {
-  font-size: 14.5px;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: center;
-  margin-top: 20px;
-}
-
-.signin a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.signin a:hover {
-  text-decoration: underline;
-}
-
-.flex {
-  display: flex;
-  width: 100%;
-  gap: 10px;
-}
-
-.form label {
-  position: relative;
-  flex: 1;
-  margin-bottom: 15px;
-}
-
-.form label .input {
-  width: 100%;
-  height: 50px;
-  background: transparent;
-  border: none;
-  outline: none;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 40px;
-  font-size: 16px;
-  color: #fff;
-  padding: 20px 45px 20px 20px;
-  margin: 10px 0;
-}
-
-.form label .input:focus {
-  border-color: #fff;
-}
-
-.form label .input + span {
-  color: rgba(255, 255, 255, 0.8);
-  position: absolute;
-  left: 20px;
-  top: -10px;
-  font-size: 0.8em;
-  background: rgba(0, 16, 96, 0.9);
-  padding: 0 5px;
-  transition: 0.3s ease;
-}
-
-.form label .input:placeholder-shown + span {
-  top: 20px;
-  font-size: 0.9em;
-  background: transparent;
-}
-
-.form label .input:focus + span,
-.form label .input:valid + span {
-  color: #fff;
-  top: -10px;
-  font-size: 0.7em;
-  font-weight: 600;
-}
-
-.password-container {
-  position: relative;
-  width: 100%;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-/* --- SEZIONE PIANI (DESTRA) --- */
-.plans-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-width: 800px;
-}
-
-/* Griglia 5 box */
-.plans-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  width: 100%;
-}
-
-.plan {
-  background: rgba(0, 16, 96, 0.336);
-  padding: 25px;
-  border-radius: 12px;
-  text-align: center;
-  transition: all 0.5s ease;
-  border: 1px solid rgba(255,255,255,0.2);
-  backdrop-filter: blur(12px);
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.plan:hover {
-  border-color: #fff;
-  transform: translateY(-5px);
-}
-
-.plan.selected {
-  border-color: #fff;
-  background: rgba(0, 16, 96, 0.5);
-  transform: scale(1.05);
-}
-
-.plan.hidden {
-  display: none;
-}
-
-.plan h3 {
-  margin-bottom: 15px;
-  color: #fff;
-  font-size: 1.4em;
-}
-
-.plan p {
-  margin-bottom: 10px;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.4;
-}
-
-.plan strong {
-  font-size: 1.3em;
-  color: #fff;
-  display: block;
-  margin: 10px 0;
-}
-
-.choosePlan {
-  margin-top: 15px;
-  padding: 12px 24px;
-  background: #1a01fc83;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  border-radius: 40px;
-  transition: 0.3s;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.choosePlan:hover {
-  background: #00bfff;
-  transform: scale(1.05);
-}
-
-/* PIANO SELEZIONATO */
-.selected-plan-container {
-  display: none;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-}
-
-.selected-plan {
-  background: rgba(0, 16, 96, 0.5);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 12px;
-  padding: 30px;
-  text-align: center;
-  backdrop-filter: blur(12px);
-}
-
-.selected-plan h3 {
-  color: #fff;
-  margin-bottom: 15px;
-  font-size: 1.8em;
-}
-
-.selected-plan p {
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 10px;
-  font-size: 1.1em;
-}
-
-.selected-plan strong {
-  font-size: 1.6em;
-  color: #fff;
-}
-
-/* --- PULSANTI DI PAGAMENTO --- */
-#paymentButtons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-#goPayment, #reviewPlans {
-  padding: 15px 25px;
-  border: none;
-  border-radius: 40px;
-  cursor: pointer;
-  display: none;
-  font-weight: bold;
-  transition: all 0.3s;
-  width: 100%;
-  font-size: 16px;
-}
-
-#goPayment {
-  background: #1a01fc83;
-  color: white;
-}
-
-#goPayment:hover {
-  background: #00bfff;
-  transform: scale(1.05);
-}
-
-#reviewPlans {
-  background: rgba(85, 85, 85, 0.8);
-  color: white;
-}
-
-#reviewPlans:hover {
-  background: #666;
-  transform: scale(1.05);
-}
-
-/* --- CARTA DI CREDITO INTERATTIVA --- */
-.card-container {
-  perspective: 1000px;
-  width: 320px;
-  height: 200px;
-  margin: 0 auto 30px;
-}
-
-.card {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.6s;
-}
-
-.card.flipped {
-  transform: rotateY(180deg);
-}
-
-.card-front, .card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(5px);
-}
-
-.card-front {
-  background: linear-gradient(45deg, rgba(26, 26, 26, 0.8), rgba(45, 45, 45, 0.8));
-  border: 1px solid #444;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.card-back {
-  background: linear-gradient(45deg, rgba(45, 45, 45, 0.8), rgba(26, 26, 26, 0.8));
-  border: 1px solid #444;
-  transform: rotateY(180deg);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.card-number {
-  font-size: 18px;
-  letter-spacing: 2px;
-  margin: 10px 0;
-  font-family: 'Courier New', monospace;
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.card-number.editing {
-  background-color: rgba(0, 191, 255, 0.2);
-  border: 1px dashed #00bfff;
-}
-
-.card-details {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-}
-
-.card-holder, .card-expiry {
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.card-holder.editing, .card-expiry.editing {
-  background-color: rgba(0, 191, 255, 0.2);
-  border: 1px dashed #00bfff;
-}
-
-.card-label {
-  font-size: 10px;
-  color: #aaa;
-  margin-bottom: 5px;
-}
-
-.card-value {
-  font-size: 16px;
-}
-
-.card-stripe {
-  background: #000;
-  height: 40px;
-  margin-bottom: 20px;
-}
-
-.card-cvv-container {
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-  margin: 0 20px;
-}
-
-.card-cvv-container.editing {
-  background-color: rgba(0, 191, 255, 0.2);
-  border: 1px dashed #00bfff;
-}
-
-.card-cvv-label {
-  font-size: 10px;
-  color: #aaa;
-  margin-bottom: 5px;
-}
-
-.card-cvv {
-  background: #fff;
-  color: #000;
-  padding: 5px 10px;
-  border-radius: 4px;
-  text-align: right;
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
-  min-height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-/* --- PULSANTE PER GIRARE LA CARTA --- */
-.flip-card-btn {
-  background: #555;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-bottom: 15px;
-  transition: background-color 0.3s;
-}
-
-.flip-card-btn:hover {
-  background: #666;
-}
-
-/* --- INPUT OVERLAY PER SCRITTURA DIRETTA --- */
-.card-input-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  border-radius: 15px;
-}
-
-.card-input-container {
-  background: #2d2d2d;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 300px;
-  border: 2px solid #00bfff;
-  box-shadow: 0 0 20px rgba(0,191,255,0.5);
-}
-
-.card-input-container h3 {
-  color: #00bfff;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.card-input {
-  width: 100%;
-  padding: 12px;
-  background: #333;
-  color: #fff;
-  border: 1px solid #444;
-  border-radius: 5px;
-  font-size: 16px;
-  margin-bottom: 15px;
-}
-
-.card-input-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.card-input-confirm, .card-input-cancel {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.card-input-confirm {
-  background: #00bfff;
-  color: white;
-}
-
-.card-input-cancel {
-  background: #555;
-  color: white;
-}
-
-/* --- PAGINA DI PAGAMENTO --- */
-.payment-page {
-  display: none;
-  width: 500px;
-  border-radius: 12px;
-  padding: 30px 40px;
-  background: rgba(0, 16, 96, 0.336);
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  text-align: center;
-  backdrop-filter: blur(12px);
-  color: #ffffff;
-}
-
-.payment-page h2 {
-  color: #fff;
-  margin-bottom: 20px;
-}
-
-.payment-details {
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.payment-details h3 {
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.payment-instructions {
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 20px;
-  font-size: 14px;
-  text-align: center;
-}
-
-#confirmPayment {
-  background: #1a01fc83;
-  color: white;
-  padding: 15px;
-  border: none;
-  border-radius: 40px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: all 0.3s;
-  width: 100%;
-}
-
-#confirmPayment:hover {
-  background: #00bfff;
-  transform: scale(1.05);
-}
-
-#backToPlans {
-  background: #555;
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 40px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: all 0.3s;
-  width: 100%;
-}
-
-#backToPlans:hover {
-  background: #666;
-  transform: scale(1.05);
-}
-
-/* --- DASHBOARD PRINCIPALE --- */
-.dashboard {
-  display: none;
-  width: 600px;
-  border-radius: 12px;
-  padding: 30px 40px;
-  background: rgba(0, 16, 96, 0.336);
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  text-align: center;
-  backdrop-filter: blur(12px);
-  color: #ffffff;
-}
-
-.dashboard h2 {
-  color: #fff;
-  margin-bottom: 20px;
-}
-
-.user-info {
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.user-info h3 {
-  color: #fff;
-  margin-bottom: 15px;
-}
-
-.plan-status {
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.plan-status h3 {
-  color: #fff;
-  margin-bottom: 15px;
-}
-
-.days-remaining {
-  font-size: 2em;
-  color: #fff;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-.expiry-date {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.1em;
-}
-
-.dashboard-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.dashboard-btn {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 40px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.primary-btn {
-  background: #1a01fc83;
-  color: white;
-}
-
-.secondary-btn {
-  background: #555;
-  color: white;
-}
-
-.dashboard-btn:hover {
-  transform: scale(1.05);
-}
-
-.primary-btn:hover {
-  background: #00bfff;
-}
-
-.secondary-btn:hover {
-  background: #666;
-}
-
-/* --- RESPONSIVE DESIGN --- */
-@media (max-width: 1200px) {
-  .container {
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-  }
-  
-  .form-section {
-    width: 100%;
-    max-width: 500px;
-  }
-  
-  .plans-section {
-    width: 100%;
-    max-width: 800px;
-  }
-}
-
-@media (max-width: 900px) {
-  .plans-container {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-}
-
-@media (max-width: 500px) {
-  .plans-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .payment-page, .dashboard {
-    width: 100%;
-    max-width: 350px;
-  }
-  
-  .card-container {
-    width: 280px;
-    height: 175px;
-  }
-  
-  .dashboard-buttons {
-    flex-direction: column;
-  }
-  
-  .flex {
-    flex-direction: column;
-  }
-  
-  .form-section .form {
-    padding: 20px 25px;
-  }
-  
-  .container {
-    padding: 15px;
-  }
-}
-</style>
-</head>
-<body>
-
-<!-- CONTENITORE PRINCIPALE -->
-<div class="container" id="mainContainer">
-  <!-- SEZIONE FORM DI REGISTRAZIONE (SINISTRA) -->
-  <div class="form-section" id="formSection">
-    <form class="form" id="registrationForm">
-        <p class="title">Register</p>
-        <p class="message">Compila i dati per accedere ai piani.</p>
-        <div class="flex">
-            <label>
-                <input class="input" type="text" placeholder="" required id="firstname">
-                <span>Firstname</span>
-            </label>
-
-            <label>
-                <input class="input" type="text" placeholder="" required id="lastname">
-                <span>Lastname</span>
-            </label>
-        </div>  
-                
-        <label>
-            <input class="input" type="email" placeholder="" required id="email">
-            <span>Email</span>
-        </label> 
-            
-        <label>
-            <div class="password-container">
-                <input class="input" type="password" placeholder="" required id="password">
-                <button type="button" class="toggle-password" id="togglePassword">Mostra</button>
-            </div>
-            <span>Password</span>
-        </label>
-        <label>
-            <div class="password-container">
-                <input class="input" type="password" placeholder="" required id="confirmPassword">
-                <button type="button" class="toggle-password" id="toggleConfirmPassword">Mostra</button>
-            </div>
-            <span>Confirm password</span>
-        </label>
-        <p class="signin">Hai già un account? <a href="login.html">Accedi</a></p>
-    </form>
-  </div>
-
-  <!-- SEZIONE PIANI (DESTRA) -->
-  <div class="plans-section" id="plansSection">
-      <!-- CONTENITORE PIANI -->
-      <div class="plans-container" id="plansContainer">
-        <div class="plan" data-plan="Base" data-description="Accesso alla palestra" data-price="€29/mese">
-          <h3>Base</h3>
-          <p>Accesso alla palestra</p>
-          <strong>€29/mese</strong>
-          <button class="choosePlan">Scegli</button>
-        </div>
-
-        <div class="plan" data-plan="Pro" data-description="Accesso completo + corsi" data-price="€49/mese">
-          <h3>Pro</h3>
-          <p>Accesso completo + corsi</p>
-          <strong>€49/mese</strong>
-          <button class="choosePlan">Scegli</button>
-        </div>
-
-        <div class="plan" data-plan="Premium" data-description="Personal trainer + eventi esclusivi" data-price="€69/mese">
-          <h3>Premium</h3>
-          <p>Personal trainer + eventi esclusivi</p>
-          <strong>€69/mese</strong>
-          <button class="choosePlan">Scegli</button>
-        </div>
-
-        <div class="plan" data-plan="Annual Basic" data-description="Accesso palestra tutti i giorni + corsi ed eventi con 4 schede" data-price="€499/anno">
-          <h3>Annual Basic</h3>
-          <p>Accesso palestra tutti i giorni</p>
-          <p>Corsi ed eventi con 4 schede</p>
-          <strong>€499 / anno</strong>
-          <button class="choosePlan">Scegli</button>
-        </div>
-
-        <div class="plan" data-plan="Annual Super" data-description="Accesso completo + personal trainer + piano alimentazione" data-price="€799/anno">
-          <h3>Annual Super</h3>
-          <p>Accesso palestra tutti i giorni</p>
-          <p>Corsi, eventi, personal trainer</p>
-          <p>Piano alimentazione personalizzato</p>
-          <strong>€799 / anno</strong>
-          <button class="choosePlan">Scegli</button>
-        </div>
-      </div>
-
-      <!-- CONTENITORE PIANO SELEZIONATO -->
-      <div class="selected-plan-container" id="selectedPlanContainer">
-          <div class="selected-plan" id="selectedPlan">
-              <h3 id="selectedPlanName">Base</h3>
-              <p id="selectedPlanDescription">Accesso alla palestra</p>
-              <p><strong id="selectedPlanPrice">€29/mese</strong></p>
-          </div>
-
-          <!-- PULSANTI PAGAMENTO -->
-          <div id="paymentButtons">
-            <button id="goPayment">Vai al pagamento</button>
-            <button id="reviewPlans">Rivedi i piani</button>
-          </div>
-      </div>
-  </div>
-</div>
-
-<!-- PAGINA DI PAGAMENTO -->
-<div class="payment-page" id="paymentPage">
-  <h2>Completa il Pagamento</h2>
-  
-  <div class="payment-details">
-    <h3 id="paymentPlanName">Base</h3>
-    <p id="paymentPlanDescription">Accesso alla palestra</p>
-    <p><strong id="paymentPlanPrice">€29/mese</strong></p>
-  </div>
-  
-  <p class="payment-instructions">Clicca sui campi della carta per inserire i dati</p>
-  
-  <!-- PULSANTE PER GIRARE LA CARTA -->
-  <button class="flip-card-btn" id="flipCardBtn">Gira la carta per CVV</button>
-  
-  <!-- CARTA DI CREDITO INTERATTIVA -->
-  <div class="card-container">
-    <div class="card" id="creditCard">
-      <!-- Fronte della carta -->
-      <div class="card-front">
-        <div class="card-number" id="card-number-display" data-field="card-number">•••• •••• •••• ••••</div>
-        <div class="card-details">
-          <div class="card-holder" data-field="card-holder">
-            <div class="card-label">Titolare</div>
-            <div class="card-value" id="card-holder-display">NOME COGNOME</div>
-          </div>
-          <div class="card-expiry" data-field="expiry-date">
-            <div class="card-label">Scadenza</div>
-            <div class="card-value" id="expiry-date-display">MM/AA</div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Retro della carta -->
-      <div class="card-back">
-        <div class="card-stripe"></div>
-        <div class="card-cvv-container" data-field="cvv">
-          <div class="card-cvv-label">CVV</div>
-          <div class="card-cvv" id="cvv-display">•••</div>
-        </div>
-      </div>
-      
-      <!-- Overlay per input -->
-      <div class="card-input-overlay" id="cardInputOverlay">
-        <div class="card-input-container">
-          <h3 id="inputTitle">Inserisci Numero Carta</h3>
-          <input type="text" class="card-input" id="cardInput" placeholder="">
-          <div class="card-input-buttons">
-            <button class="card-input-confirm" id="cardInputConfirm">Conferma</button>
-            <button class="card-input-cancel" id="cardInputCancel">Annulla</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <button id="confirmPayment">Conferma Pagamento</button>
-  <button id="backToPlans">Torna ai Piani</button>
-</div>
-
-<!-- DASHBOARD PRINCIPALE -->
-<div class="dashboard" id="dashboard">
-  <h2>Benvenuto in FitLife!</h2>
-  
-  <div class="user-info">
-    <h3>I tuoi dati</h3>
-    <p><strong>Nome:</strong> <span id="userName">-</span></p>
-    <p><strong>Email:</strong> <span id="userEmail">-</span></p>
-    <p><strong>Data registrazione:</strong> <span id="registrationDate">-</span></p>
-  </div>
-  
-  <div class="plan-status">
-    <h3>Il tuo piano</h3>
-    <div id="userPlanName" style="font-size: 1.5em; color: #fff; margin-bottom: 10px;">-</div>
-    <div id="userPlanDescription" style="color: #ccc; margin-bottom: 15px;">-</div>
-    <div class="days-remaining" id="daysRemaining">-</div>
-    <div class="expiry-date">Scadenza: <span id="planExpiryDate">-</span></div>
-  </div>
-  
-  <div class="dashboard-buttons">
-    <button class="dashboard-btn primary-btn" id="renewPlan">Rinnova Piano</button>
-    <button class="dashboard-btn secondary-btn" id="changePlan">Cambia Piano</button>
-    <button class="dashboard-btn secondary-btn" id="logoutBtn">Esci</button>
-  </div>
-</div>
-
-<script>
-// --- VARIABILI GLOBALI ---
-let currentSelectedPlan = null;
-let currentEditingField = null;
-let userData = {};
-
-// Elementi DOM
-const elements = {
-    // Container principali
-    mainContainer: document.getElementById("mainContainer"),
-    formSection: document.getElementById("formSection"),
-    plansSection: document.getElementById("plansSection"),
-    
-    // Form registrazione
-    plansContainer: document.getElementById("plansContainer"),
-    chooseButtons: document.querySelectorAll(".choosePlan"),
-    form: document.getElementById("registrationForm"),
-    selectedPlanContainer: document.getElementById("selectedPlanContainer"),
-    selectedPlan: document.getElementById("selectedPlan"),
-    selectedPlanName: document.getElementById("selectedPlanName"),
-    selectedPlanDescription: document.getElementById("selectedPlanDescription"),
-    selectedPlanPrice: document.getElementById("selectedPlanPrice"),
-    goPayment: document.getElementById("goPayment"),
-    reviewPlans: document.getElementById("reviewPlans"),
-    
-    // Pagamento
-    paymentPage: document.getElementById("paymentPage"),
-    paymentPlanName: document.getElementById("paymentPlanName"),
-    paymentPlanDescription: document.getElementById("paymentPlanDescription"),
-    paymentPlanPrice: document.getElementById("paymentPlanPrice"),
-    confirmPayment: document.getElementById("confirmPayment"),
-    backToPlans: document.getElementById("backToPlans"),
-    creditCard: document.getElementById("creditCard"),
-    flipCardBtn: document.getElementById("flipCardBtn"),
-    cardInputOverlay: document.getElementById("cardInputOverlay"),
-    cardInput: document.getElementById("cardInput"),
-    cardInputConfirm: document.getElementById("cardInputConfirm"),
-    cardInputCancel: document.getElementById("cardInputCancel"),
-    inputTitle: document.getElementById("inputTitle"),
-    
-    // Dashboard
-    dashboard: document.getElementById("dashboard"),
-    userName: document.getElementById("userName"),
-    userEmail: document.getElementById("userEmail"),
-    registrationDate: document.getElementById("registrationDate"),
-    userPlanName: document.getElementById("userPlanName"),
-    userPlanDescription: document.getElementById("userPlanDescription"),
-    daysRemaining: document.getElementById("daysRemaining"),
-    planExpiryDate: document.getElementById("planExpiryDate"),
-    renewPlan: document.getElementById("renewPlan"),
-    changePlan: document.getElementById("changePlan"),
-    logoutBtn: document.getElementById("logoutBtn"),
-    
-    // Password toggle
-    togglePassword: document.getElementById("togglePassword"),
-    toggleConfirmPassword: document.getElementById("toggleConfirmPassword"),
-    passwordInput: document.getElementById("password"),
-    confirmPasswordInput: document.getElementById("confirmPassword")
-};
-
-// --- FUNZIONI PER IL FORM ---
-elements.togglePassword.addEventListener("click", () => {
-    const type = elements.passwordInput.getAttribute("type") === "password" ? "text" : "password";
-    elements.passwordInput.setAttribute("type", type);
-    elements.togglePassword.textContent = type === "password" ? "Mostra" : "Nascondi";
-});
-
-elements.toggleConfirmPassword.addEventListener("click", () => {
-    const type = elements.confirmPasswordInput.getAttribute("type") === "password" ? "text" : "password";
-    elements.confirmPasswordInput.setAttribute("type", type);
-    elements.toggleConfirmPassword.textContent = type === "password" ? "Mostra" : "Nascondi";
-});
-
-// --- FUNZIONI PER LA SELEZIONE DEI PIANI ---
-elements.chooseButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        const planDiv = btn.parentElement;
-        const planName = planDiv.getAttribute("data-plan");
-        const planDescription = planDiv.getAttribute("data-description");
-        const planPrice = planDiv.getAttribute("data-price");
-        
-        if (currentSelectedPlan) {
-            currentSelectedPlan.classList.remove("selected");
-            currentSelectedPlan.querySelector(".choosePlan").style.display = "block";
-        }
-        
-        currentSelectedPlan = planDiv;
-        planDiv.classList.add("selected");
-        btn.style.display = "none";
-        
-        // Aggiorna il piano selezionato
-        elements.selectedPlanName.textContent = planName;
-        elements.selectedPlanDescription.textContent = planDescription;
-        elements.selectedPlanPrice.textContent = planPrice;
-        
-        // Cambia layout: mostra solo il piano selezionato
-        elements.selectedPlanContainer.style.display = "flex";
-        elements.plansContainer.style.display = "none";
-        
-        elements.goPayment.style.display = "block";
-        elements.reviewPlans.style.display = "block";
-    });
-});
-
-elements.reviewPlans.addEventListener("click", () => {
-    // Ripristina la vista originale
-    elements.selectedPlanContainer.style.display = "none";
-    elements.plansContainer.style.display = "grid";
-    
-    document.querySelectorAll(".plan").forEach(p => {
-        p.querySelector(".choosePlan").style.display = "block";
-        p.classList.remove("selected");
-    });
-    
-    elements.goPayment.style.display = "none";
-    elements.reviewPlans.style.display = "none";
-    currentSelectedPlan = null;
-});
-
-// --- FUNZIONI PER IL PAGAMENTO ---
-elements.goPayment.addEventListener("click", () => {
-    if (!currentSelectedPlan) {
-        alert("Seleziona un piano prima di procedere al pagamento!");
-        return;
-    }
-    
-    elements.paymentPlanName.textContent = currentSelectedPlan.getAttribute("data-plan");
-    elements.paymentPlanDescription.textContent = currentSelectedPlan.getAttribute("data-description");
-    elements.paymentPlanPrice.textContent = currentSelectedPlan.getAttribute("data-price");
-    
-    elements.mainContainer.style.display = "none";
-    elements.paymentPage.style.display = "block";
-});
-
-elements.backToPlans.addEventListener("click", () => {
-    elements.paymentPage.style.display = "none";
-    elements.mainContainer.style.display = "flex";
-    elements.creditCard.classList.remove("flipped");
-});
-
-// Gira la carta
-elements.flipCardBtn.addEventListener("click", () => {
-    elements.creditCard.classList.toggle("flipped");
-});
-
-// --- FUNZIONI PER LA CARTA DI CREDITO ---
-document.querySelectorAll('[data-field]').forEach(field => {
-    field.addEventListener('click', (e) => {
-        const fieldType = e.currentTarget.getAttribute('data-field');
-        openCardInput(fieldType);
-    });
-});
-
-function openCardInput(fieldType) {
-    currentEditingField = fieldType;
-    
-    switch(fieldType) {
-        case 'card-number':
-            elements.inputTitle.textContent = 'Inserisci Numero Carta';
-            elements.cardInput.placeholder = '1234 5678 9012 3456';
-            elements.cardInput.maxLength = 19;
-            elements.cardInput.value = document.getElementById('card-number-display').textContent.replace(/•/g, '').trim();
-            break;
-        case 'card-holder':
-            elements.inputTitle.textContent = 'Inserisci Nome Titolare';
-            elements.cardInput.placeholder = 'MARIO ROSSI';
-            elements.cardInput.maxLength = 30;
-            elements.cardInput.value = document.getElementById('card-holder-display').textContent;
-            break;
-        case 'expiry-date':
-            elements.inputTitle.textContent = 'Inserisci Data Scadenza (MM/AA)';
-            elements.cardInput.placeholder = 'MM/AA';
-            elements.cardInput.maxLength = 5;
-            elements.cardInput.value = document.getElementById('expiry-date-display').textContent;
-            break;
-        case 'cvv':
-            elements.inputTitle.textContent = 'Inserisci CVV';
-            elements.cardInput.placeholder = '123';
-            elements.cardInput.maxLength = 3;
-            elements.cardInput.type = 'password';
-            elements.cardInput.value = document.getElementById('cvv-display').textContent;
-            elements.creditCard.classList.add('flipped');
-            break;
-    }
-    
-    elements.cardInputOverlay.style.display = 'flex';
-    elements.cardInput.focus();
-}
-
-elements.cardInputConfirm.addEventListener('click', () => {
-    const value = elements.cardInput.value.trim();
-    
-    if (value) {
-        switch(currentEditingField) {
-            case 'card-number':
-                let cardNumber = value.replace(/\D/g, '').slice(0, 16);
-                document.getElementById('card-number-display').textContent = formatCardNumber(cardNumber);
-                break;
-            case 'card-holder':
-                document.getElementById('card-holder-display').textContent = value.toUpperCase();
-                break;
-            case 'expiry-date':
-                let formattedExpiry = formatExpiryDate(value);
-                document.getElementById('expiry-date-display').textContent = formattedExpiry;
-                break;
-            case 'cvv':
-                let cvv = value.replace(/\D/g, '').slice(0, 3);
-                document.getElementById('cvv-display').textContent = cvv;
-                break;
-        }
-    }
-    
-    closeCardInput();
-});
-
-elements.cardInputCancel.addEventListener('click', closeCardInput);
-
-function closeCardInput() {
-    elements.cardInputOverlay.style.display = 'none';
-    elements.cardInput.value = '';
-    elements.cardInput.type = 'text';
-    currentEditingField = null;
-}
-
-function formatCardNumber(number) {
-    return number.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim().slice(0, 19);
-}
-
-function formatExpiryDate(value) {
-    let numbers = value.replace(/\D/g, '');
-    numbers = numbers.slice(0, 4);
-    
-    if (numbers.length >= 2) {
-        return numbers.slice(0, 2) + '/' + numbers.slice(2, 4);
-    }
-    
-    return numbers;
-}
-
-// --- CONFERMA PAGAMENTO E DASHBOARD ---
-elements.confirmPayment.addEventListener("click", () => {
-    const cardNumber = document.getElementById('card-number-display').textContent;
-    const cardHolder = document.getElementById('card-holder-display').textContent;
-    const expiryDate = document.getElementById('expiry-date-display').textContent;
-    const cvv = document.getElementById('cvv-display').textContent;
-    
-    if (cardNumber === '•••• •••• •••• ••••' || 
-        cardHolder === 'NOME COGNOME' || 
-        expiryDate === 'MM/AA' || 
-        cvv === '•••') {
-        alert("Compila tutti i campi della carta prima di procedere!");
-        return;
-    }
-    
-    const cardNumberDigits = cardNumber.replace(/\s/g, '').replace(/•/g, '');
-    if (cardNumberDigits.length !== 16) {
-        alert("Il numero della carta deve essere di 16 cifre!");
-        return;
-    }
-    
-    if (cvv.length !== 3 || cvv === '•••') {
-        alert("Il CVV deve essere di 3 cifre!");
-        return;
-    }
-    
-    // Salva i dati del piano
-    userData.plan = {
-        name: currentSelectedPlan.getAttribute("data-plan"),
-        description: currentSelectedPlan.getAttribute("data-description"),
-        price: currentSelectedPlan.getAttribute("data-price"),
-        startDate: new Date(),
-        expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 giorni da oggi
-    };
-    
-    // Mostra la dashboard
-    showDashboard();
-});
-
-function showDashboard() {
-    // Nascondi tutto e mostra dashboard
-    elements.paymentPage.style.display = "none";
-    elements.mainContainer.style.display = "none";
-    elements.dashboard.style.display = "block";
-    
-    // Aggiorna dati utente
-    elements.userName.textContent = `${userData.firstname} ${userData.lastname}`;
-    elements.userEmail.textContent = userData.email;
-    elements.registrationDate.textContent = userData.registrationDate;
-    
-    // Aggiorna dati piano
-    elements.userPlanName.textContent = userData.plan.name;
-    elements.userPlanDescription.textContent = userData.plan.description;
-    
-    // Calcola giorni rimanenti
-    updateDaysRemaining();
-    
-    // Formatta data scadenza
-    const expiryDate = new Date(userData.plan.expiryDate);
-    elements.planExpiryDate.textContent = expiryDate.toLocaleDateString('it-IT');
-}
-
-function updateDaysRemaining() {
-    const now = new Date();
-    const expiry = new Date(userData.plan.expiryDate);
-    const diffTime = expiry - now;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays > 0) {
-        elements.daysRemaining.textContent = `${diffDays} giorni`;
-        elements.daysRemaining.style.color = diffDays <= 7 ? '#ff4444' : '#fff';
-    } else {
-        elements.daysRemaining.textContent = "SCADUTO";
-        elements.daysRemaining.style.color = '#ff4444';
-    }
-}
-
-// --- PULSANTI DASHBOARD ---
-elements.renewPlan.addEventListener("click", () => {
-    alert("Funzionalità di rinnovo piano non ancora implementata");
-});
-
-elements.changePlan.addEventListener("click", () => {
-    elements.dashboard.style.display = "none";
-    elements.mainContainer.style.display = "flex";
-    // Ripristina selezione piani
-    elements.reviewPlans.click();
-});
-
-elements.logoutBtn.addEventListener("click", () => {
-    if (confirm("Sei sicuro di voler uscire?")) {
-        // Reset di tutto
-        location.reload();
-    }
-});
-
-// Aggiorna il contatore ogni giorno
-setInterval(updateDaysRemaining, 24 * 60 * 60 * 1000);
-</script>
-</body>
->>>>>>> 8a8479ab57a27ddd811854ea1054639695eee35c
 </html>
