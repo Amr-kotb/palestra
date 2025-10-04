@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PowerGym - Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html {scroll-behavior: smooth;}
+body{
+  font-family:'Roboto',sans-serif;
+  background:#0a0a0a;
+  color:#ffffff;
+  transition: background 0.5s, color 0.5s;
+}
+
+/* HEADER TRASPARENTE */
+header{
+  position:fixed;
+  top:0;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 50px;
+  background:rgb(0, 0, 0);
+  backdrop-filter:blur(6px);
+  color:white;
+  z-index:10;
+  transition: background 0.5s, color 0.5s;
+}
+header .logo{font-size:1.8em;color:#2196f3;font-weight:bold;}
+nav{display:flex;align-items:center;}
+nav a{
+  margin-left:10px;text-decoration:none;color:white;font-weight:500;display:flex;align-items:center;
+  transition:0.3s;
+}
+nav a svg{width:24px;height:24px;margin-left:5px;fill:white;}
+nav a:hover{color:#64b5f6;}
+
+/* SWITCH TEMA */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin-right: 20px;
+}
+.switch input {opacity:0;width:0;height:0;}
+.slider {position: absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; transition:0.4s; border-radius:34px;}
+.slider .sun, .slider .moon {position:absolute; top:4px; width:26px; height:26px; transition:0.4s;}
+.slider .sun {left:4px; background: url('https://cdn-icons-png.flaticon.com/512/869/869869.png') no-repeat center/contain; display:block;}
+.slider .moon {left:30px; background: url('https://cdn-icons-png.flaticon.com/128/3751/3751205.png') no-repeat center/contain; display:none;}
+
+/* HERO */
+.hero{
+  height:100vh;
+  background:linear-gradient(rgba(0, 0, 0, 0.747), rgba(11, 0, 165, 0.3)),
+             url('https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  color:white;
+  padding:0 20px;
+}
+.hero h1{font-size:3.5em;margin-bottom:20px;color:#2196f3;animation:pulse 3s infinite;}
+.hero p{font-size:1.5em;max-width:700px;line-height:1.5;}
+
+/* Chi Siamo e Scopri Piani */
+.chi-piani {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:40px;
+  padding:80px 20px;
+}
+.chi-piani .box {
+  padding:25px 20px;
+  border-radius:15px;
+  text-align:center;
+  width:300px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.3);
+  transition:0.3s;
+}
+
+/* Mini card sedi */
+#sedi {padding:40px 20px; text-align:center;}
+#sedi h2 {color:#2196f3; margin-bottom:30px;}
+#sedi .mini-cards {display:flex; flex-wrap:wrap; justify-content:center; gap:20px;}
+#sedi .mini-cards .card {width:160px; padding:15px; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,0.3); transition:0.3s; text-align:center; font-weight:700;}
+#sedi .mini-cards .card:hover {transform:translateY(-3px); box-shadow:0 6px 15px rgba(0,0,0,0.5);}
+
+/* Piani */
+section{padding:80px 20px; max-width:1200px;margin:0 auto;}
+section h2{text-align:center;margin-bottom:50px;font-size:2.5em;color:#2196f3;}
+.cards{display:flex;flex-wrap:wrap;justify-content:center;gap:40px;}
+.card{padding:35px;border-radius:15px;width:300px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.3);transition:0.3s;font-weight:700;}
+.card:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.5);}
+.card h3{margin-bottom:20px;font-size:1.5em;}
+.card p{margin-bottom:15px;font-size:1em;line-height:1.5;}
+button{cursor:pointer;font-weight:700;transition:all 0.2s;padding:10px 20px;border-radius:100px;background:#2196f3;color:white;border:1px solid transparent;display:flex;align-items:center;font-size:15px;}
+button:hover { background:#1976d2; }
+button:active { transform:scale(0.95); }
+
+footer{background:#0d0d0d;color:white;text-align:center;padding:30px 20px;margin-top:50px;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+
+/* ================= TEMI ================= */
+
+/* Tema Chiaro */
+body.light {
+  background: #ffffff;
+  color: #0a0a0a;
+}
+body.light header {
+  background: rgba(255, 255, 255, 0.8);
+  color: #0a0a0a;
+}
+body.light .chi-piani .box,
+body.light .card,
+body.light #sedi .mini-cards .card {
+  background: #2196f3;
+  color: #ffffff;
+}
+body.light h1, 
+body.light h2, 
+body.light h3 {
+  color: #1976d2;
+}
+
+/* Tema Scuro */
+body.dark {
+  background: #0a0a0a;
+  color: #ffffff;
+}
+body.dark header {
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+}
+body.dark .chi-piani .box,
+body.dark .card,
+body.dark #sedi .mini-cards .card {
+  background: #010033; /* blu molto scuro */
+  color: #ffffff;
+}
+body.dark h1, 
+body.dark h2, 
+body.dark h3 {
+  color: #2196f3;
+}
+</style>
+</head>
+<body class="dark">
+
+<header>
+  <div class="logo">PowerGym</div>
+  <nav>
+    <label class="switch">
+      <input type="checkbox" id="theme-toggle">
+      <span class="slider">
+        <div class="sun"></div>
+        <div class="moon"></div>
+      </span>
+    </label>
+    <a href="profilo.html">
+      <span>Profilo</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.2c-3.3 0-9.9 1.7-9.9 5v2.7h19.8v-2.7c0-3.3-6.6-5-9.9-5z"/></svg>
+    </a>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Benvenuti a PowerGym</h1>
+    <p>Allenamenti personalizzati, istruttori qualificati e attrezzature all’avanguardia per trasformare il tuo corpo e la tua mente.</p>
+  </div>
+
+  <!-- Chi Siamo e Scopri Piani -->
+  <div class="chi-piani">
+    <div class="box" onclick="document.getElementById('chi-siamo').scrollIntoView({behavior:'smooth'});">
+      <h3>Chi Siamo</h3>
+      <p>Scopri la nostra missione e filosofia</p>
+    </div>
+    <div class="box" onclick="document.getElementById('servizi').scrollIntoView({behavior:'smooth'});">
+      <h3>Scopri i Piani di Allenamento</h3>
+      <p>Scopri i nostri abbonamenti</p>
+    </div>
+  </div>
+
+  <!-- Mini box sedi -->
+  <section id="sedi">
+    <h2>Le Nostre Sedi</h2>
+    <div class="mini-cards">
+      <div class="card">Milano</div>
+      <div class="card">Roma</div>
+      <div class="card">Napoli</div>
+      <div class="card">Torino</div>
+      <div class="card">Bologna</div>
+    </div>
+  </section>
+
+  <!-- Piani -->
+  <section id="servizi">
+    <h2>I Nostri Piani</h2>
+    <div class="cards">
+
+      <!-- Mensili -->
+      <div class="card"><h3>Base</h3>
+        <p>Accesso alla sala e attrezzature standard.</p>
+        <p>€29 / mese</p>
+        <button onclick="vaiRegistrazione('Base')">Scegli</button>
+      </div>
+
+      <div class="card"><h3>Pro</h3>
+        <p>Accesso completo, corsi inclusi e supporto mensile.</p>
+        <p>€49 / mese</p>
+        <button onclick="vaiRegistrazione('Pro')">Scegli</button>
+      </div>
+
+      <div class="card"><h3>Premium</h3>
+        <p>Accesso totale, personal trainer e eventi esclusivi.</p>
+        <p>€69 / mese</p>
+        <button onclick="vaiRegistrazione('Premium')">Scegli</button>
+      </div>
+      
+      <!-- Annuali -->
+      <div class="card"><h3>Annual Basic</h3>
+        <p>Accesso palestra tutti i giorni, corsi ed eventi con 4 schede.</p>
+        <p>€499 / anno</p>
+        <button onclick="vaiRegistrazione('Annual Basic')">Scegli</button>
+      </div>
+
+      <div class="card"><h3>Annual Super</h3>
+        <p>Accesso palestra tutti i giorni, corsi, eventi, personal trainer, 5 schede e piano alimentazione personalizzato.</p>
+        <p>€799 / anno</p>
+        <button onclick="vaiRegistrazione('Annual Super')">Scegli</button>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>© 2025 PowerGym - Tutti i diritti riservati</p>
+</footer>
+
+<script>
+// Toggle tema chiaro/scuro
+const toggle = document.getElementById('theme-toggle');
+const bodyTag = document.body;
+const sun = document.querySelector('.slider .sun');
+const moon = document.querySelector('.slider .moon');
+
+toggle.addEventListener('change', () => {
+  if(toggle.checked){
+    bodyTag.classList.remove('dark');
+    bodyTag.classList.add('light');
+    sun.style.display = "none";
+    moon.style.display = "block";
+  } else {
+    bodyTag.classList.remove('light');
+    bodyTag.classList.add('dark');
+    sun.style.display = "block";
+    moon.style.display = "none";
+  }
+});
+
+// Funzione per passare il piano alla registrazione
+function vaiRegistrazione(piano) {
+  window.location.href = `register.html?piano=${encodeURIComponent(piano)}`;
+}
+</script>
+
+</body>
+</html>
