@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "palestra-akotb"
-  }
+    "default": "akotb-palestra-b6f81"
+  },
+  "targets": {},
+  "etags": {}
 }
