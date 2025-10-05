@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - PowerGym</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: url('https://images.unsplash.com/photo-1579758629938-03607ccdbaba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: -1;
+}
+
+.home-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+  color: white;
+  background: linear-gradient(90deg, #00106b 0%, #000000 100%);
+  transition: all 0.4s ease;
+  z-index: 1000;
+}
+
+.home-btn:hover {
+  background: linear-gradient(90deg, #000000 0%, #00106b 100%);
+  transform: scale(1.05);
+}
+
+.dashboard {
+  width: 600px;
+  border-radius: 12px;
+  padding: 30px 40px;
+  background: rgba(0, 16, 96, 0.336);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  text-align: center;
+  backdrop-filter: blur(12px);
+  color: #ffffff;
+}
+
+.dashboard h2 {
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.user-info h3 {
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.plan-status {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.plan-status h3 {
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.days-remaining {
+  font-size: 2em;
+  color: #fff;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.expiry-date {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1em;
+}
+
+.dashboard-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.dashboard-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.primary-btn {
+  background: #1a01fc83;
+  color: white;
+}
+
+.secondary-btn {
+  background: #555;
+  color: white;
+}
+
+.dashboard-btn:hover {
+  transform: scale(1.05);
+}
+
+.primary-btn:hover {
+  background: #00bfff;
+}
+
+.secondary-btn:hover {
+  background: #666;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+}
+</style>
+</head>
+<body>
+<button class="home-btn" onclick="window.location.href='index.html'">Home</button>
+
+<div class="dashboard" id="dashboard">
+  <h2>Benvenuto in PowerGym!</h2>
+  
+  <div class="user-info">
+    <h3>I tuoi dati</h3>
+    <p><strong>Nome:</strong> <span id="userName">-</span></p>
+    <p><strong>Email:</strong> <span id="userEmail">-</span></p>
+    <p><strong>Data registrazione:</strong> <span id="registrationDate">-</span></p>
+  </div>
+  
+  <div class="plan-status">
+    <h3>Il tuo piano</h3>
+    <div id="userPlanName" style="font-size: 1.5em; color: #fff; margin-bottom: 10px;">-</div>
+    <div id="userPlanDescription" style="color: #ccc; margin-bottom: 15px;">-</div>
+    <div class="days-remaining" id="daysRemaining">-</div>
+    <div class="expiry-date">Scadenza: <span id="planExpiryDate">-</span></div>
+  </div>
+  
+  <div class="dashboard-buttons">
+    <button class="dashboard-btn primary-btn" id="renewPlan">Rinnova Piano</button>
+    <button class="dashboard-btn secondary-btn" id="changePlan">Cambia Piano</button>
+    <button class="dashboard-btn secondary-btn" id="logoutBtn">Esci</button>
+  </div>
+</div>
+
+<div class="loading" id="loading" style="display: none;">
+  <p>Caricamento...</p>
+</div>
+
+<!-- Firebase SDK Standardizzato -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCIUPjUg9FoUa0nE6H33aUU_nAPo-UE22U",
+    authDomain: "akotb-palestra-1a8f4.firebaseapp.com",
+    projectId: "akotb-palestra-1a8f4",
+    storageBucket: "akotb-palestra-1a8f4.appspot.com",
+    messagingSenderId: "951653452261",
+    appId: "1:951653452261:web:0c55cfe159f81817b8870c"
+  };
+
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // Controlla se l'utente è loggato
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      loadUserData(user);
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
+
+  async function loadUserData(user) {
+    try {
+      // Carica dati da Firestore
+      const userDoc = await db.collection('users').doc(user.uid).get();
+      
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        
+        // Aggiorna UI
+        document.getElementById('userName').textContent = 
+          `${userData.firstname || ''} ${userData.lastname || ''}`.trim() || user.email;
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('registrationDate').textContent = 
+          userData.registrationDate ? new Date(userData.registrationDate.seconds * 1000).toLocaleDateString('it-IT') : '-';
+        
+        // Carica dati piano
+        if (userData.plan) {
+          document.getElementById('userPlanName').textContent = userData.plan.name;
+          document.getElementById('userPlanDescription').textContent = userData.plan.description;
+          
+          const expiryDate = new Date(userData.plan.expiryDate.seconds * 1000);
+          document.getElementById('planExpiryDate').textContent = expiryDate.toLocaleDateString('it-IT');
+          
+          updateDaysRemaining(expiryDate);
+        } else {
+          document.getElementById('userPlanName').textContent = 'Nessun piano attivo';
+          document.getElementById('userPlanDescription').textContent = 'Scegli un piano per iniziare';
+        }
+      }
+    } catch (error) {
+      console.error('Errore caricamento dati:', error);
+    }
+  }
+
+  function updateDaysRemaining(expiryDate) {
+    const now = new Date();
+    const diffTime = expiryDate - now;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    const daysElement = document.getElementById('daysRemaining');
+    if (diffDays > 0) {
+      daysElement.textContent = `${diffDays} giorni`;
+      daysElement.style.color = diffDays <= 7 ? '#ff4444' : '#fff';
+    } else {
+      daysElement.textContent = "SCADUTO";
+      daysElement.style.color = '#ff4444';
+    }
+  }
+
+  // Gestione pulsanti
+  document.getElementById('renewPlan').addEventListener('click', () => {
+    alert("Funzionalità di rinnovo piano non ancora implementata");
+  });
+
+  document.getElementById('changePlan').addEventListener('click', () => {
+    window.location.href = 'register.html';
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    if (confirm("Sei sicuro di voler uscire?")) {
+      auth.signOut().then(() => {
+        window.location.href = 'index.html';
+      });
+    }
+  });
+</script>
+</body>
+</html>

@@ -143,7 +143,7 @@ body.dark header {
 body.dark .chi-piani .box,
 body.dark .card,
 body.dark #sedi .mini-cards .card {
-  background: #010033; /* blu molto scuro */
+  background: #010033;
   color: #ffffff;
 }
 body.dark h1, 
@@ -175,10 +175,9 @@ body.dark h3 {
 <main>
   <div class="hero">
     <h1>Benvenuti a PowerGym</h1>
-    <p>Allenamenti personalizzati, istruttori qualificati e attrezzature all’avanguardia per trasformare il tuo corpo e la tua mente.</p>
+    <p>Allenamenti personalizzati, istruttori qualificati e attrezzature all'avanguardia per trasformare il tuo corpo e la tua mente.</p>
   </div>
 
-  <!-- Chi Siamo e Scopri Piani -->
   <div class="chi-piani">
     <div class="box" onclick="document.getElementById('chi-siamo').scrollIntoView({behavior:'smooth'});">
       <h3>Chi Siamo</h3>
@@ -190,7 +189,6 @@ body.dark h3 {
     </div>
   </div>
 
-  <!-- Mini box sedi -->
   <section id="sedi">
     <h2>Le Nostre Sedi</h2>
     <div class="mini-cards">
@@ -202,43 +200,34 @@ body.dark h3 {
     </div>
   </section>
 
-  <!-- Piani -->
   <section id="servizi">
     <h2>I Nostri Piani</h2>
     <div class="cards">
-
-      <!-- Mensili -->
       <div class="card"><h3>Base</h3>
         <p>Accesso alla sala e attrezzature standard.</p>
         <p>€29 / mese</p>
         <button onclick="vaiRegistrazione('Base')">Scegli</button>
       </div>
-
       <div class="card"><h3>Pro</h3>
         <p>Accesso completo, corsi inclusi e supporto mensile.</p>
         <p>€49 / mese</p>
         <button onclick="vaiRegistrazione('Pro')">Scegli</button>
       </div>
-
       <div class="card"><h3>Premium</h3>
         <p>Accesso totale, personal trainer e eventi esclusivi.</p>
         <p>€69 / mese</p>
         <button onclick="vaiRegistrazione('Premium')">Scegli</button>
       </div>
-      
-      <!-- Annuali -->
       <div class="card"><h3>Annual Basic</h3>
         <p>Accesso palestra tutti i giorni, corsi ed eventi con 4 schede.</p>
         <p>€499 / anno</p>
         <button onclick="vaiRegistrazione('Annual Basic')">Scegli</button>
       </div>
-
       <div class="card"><h3>Annual Super</h3>
         <p>Accesso palestra tutti i giorni, corsi, eventi, personal trainer, 5 schede e piano alimentazione personalizzato.</p>
         <p>€799 / anno</p>
         <button onclick="vaiRegistrazione('Annual Super')">Scegli</button>
       </div>
-
     </div>
   </section>
 </main>
@@ -247,8 +236,25 @@ body.dark h3 {
   <p>© 2025 PowerGym - Tutti i diritti riservati</p>
 </footer>
 
+<!-- Firebase SDK Standardizzato -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
 <script>
-// Toggle tema chiaro/scuro
+  const firebaseConfig = {
+    apiKey: "AIzaSyCIUPjUg9FoUa0nE6H33aUU_nAPo-UE22U",
+    authDomain: "akotb-palestra-1a8f4.firebaseapp.com",
+    projectId: "akotb-palestra-1a8f4",
+    storageBucket: "akotb-palestra-1a8f4.appspot.com",
+    messagingSenderId: "951653452261",
+    appId: "1:951653452261:web:0c55cfe159f81817b8870c",
+    measurementId: "G-7GRVWEZGCW"
+  };
+  
+  const app = firebase.initializeApp(firebaseConfig);
+  const analytics = firebase.analytics();
+</script>
+
+<script>
 const toggle = document.getElementById('theme-toggle');
 const bodyTag = document.body;
 const sun = document.querySelector('.slider .sun');
@@ -268,11 +274,9 @@ toggle.addEventListener('change', () => {
   }
 });
 
-// Funzione per passare il piano alla registrazione
 function vaiRegistrazione(piano) {
   window.location.href = `register.html?piano=${encodeURIComponent(piano)}`;
 }
 </script>
-
 </body>
 </html>
