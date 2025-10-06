@@ -8,8 +8,8 @@
     ],
     "rewrites": [
       {
-        "glob": "**",
-        "path": "/index.html"
+        "source": "**",
+        "destination": "/index.html"
       }
     ]
   }
