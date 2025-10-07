@@ -1455,28 +1455,22 @@ body::before {
       }
   });
 
-  function showDashboard() {
-      // Nascondi tutto e mostra dashboard
-      elements.paymentPage.style.display = "none";
-      elements.mainContainer.style.display = "none";
-      elements.dashboard.style.display = "block";
-      
-      // Aggiorna dati utente
-      elements.userName.textContent = `${userData.firstname} ${userData.lastname}`;
-      elements.userEmail.textContent = userData.email;
-      elements.registrationDate.textContent = userData.registrationDate;
-      
-      // Aggiorna dati piano
-      elements.userPlanName.textContent = userData.plan.name;
-      elements.userPlanDescription.textContent = userData.plan.description;
-      
-      // Calcola giorni rimanenti
-      updateDaysRemaining();
-      
-      // Formatta data scadenza
-      const expiryDate = new Date(userData.plan.expiryDate);
-      elements.planExpiryDate.textContent = expiryDate.toLocaleDateString('it-IT');
-  }
+function showDashboard() {
+  // PREPARA I DATI COMPLETI DELL'UTENTE
+  const userCompleteData = {
+    firstname: userData.firstname,
+    lastname: userData.lastname,
+    email: userData.email,
+    registrationDate: userData.registrationDate,
+    plan: userData.plan
+  };
+  
+  // SALVA NEL LOCALSTORAGE
+  localStorage.setItem('userData', JSON.stringify(userCompleteData));
+  
+  // REDIRECT ALLA DASHBOARD
+  window.location.href = 'dashboard.html';
+}
 
   function updateDaysRemaining() {
       const now = new Date();

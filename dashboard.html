@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Piani - PowerGym</title>
+<title>La Tua Dashboard - PowerGym</title>
 <style>
 * {
   margin: 0;
@@ -13,9 +13,25 @@
 
 body {
   font-family: Arial, sans-serif;
-  background: #0a0a0a;
-  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: url('https://images.unsplash.com/photo-1579758629938-03607ccdbaba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+  color: #fff;
+  margin: 0;
   padding: 20px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: -1;
 }
 
 .home-btn {
@@ -39,121 +55,398 @@ body {
   transform: scale(1.05);
 }
 
-section {
-  padding: 80px 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-section h2 {
-  text-align: center;
-  margin-bottom: 50px;
-  font-size: 2.5em;
-  color: #2196f3;
-}
-
-.cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 40px;
-}
-
-.card {
-  padding: 35px;
+.dashboard-container {
+  width: 800px;
   border-radius: 15px;
-  width: 300px;
+  padding: 40px;
+  background: rgba(0, 16, 96, 0.336);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  transition: 0.3s;
-  font-weight: 700;
-  background: #010033;
+  backdrop-filter: blur(12px);
+  color: #ffffff;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+.dashboard-header {
+  margin-bottom: 30px;
 }
 
-.card h3 {
+.dashboard-header h1 {
+  color: #2196f3;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.welcome-message {
+  font-size: 1.2em;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.user-info, .plan-info {
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 25px;
+  text-align: left;
+}
+
+.user-info h2, .plan-info h2 {
+  color: #2196f3;
   margin-bottom: 20px;
-  font-size: 1.5em;
+  font-size: 1.4em;
+  border-bottom: 2px solid #2196f3;
+  padding-bottom: 10px;
+}
+
+.info-item {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-label {
+  font-weight: bold;
   color: #2196f3;
 }
 
-.card p {
-  margin-bottom: 15px;
-  font-size: 1em;
-  line-height: 1.5;
+.info-value {
+  color: #ffffff;
 }
 
-button {
+.plan-status {
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+}
+
+.plan-status h2 {
+  color: #2196f3;
+  margin-bottom: 20px;
+  font-size: 1.4em;
+}
+
+.current-plan {
+  font-size: 1.8em;
+  color: #fff;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.plan-description {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 20px;
+  font-size: 1.1em;
+}
+
+.days-remaining {
+  font-size: 3em;
+  color: #4caf50;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.expired {
+  color: #ff4444 !important;
+}
+
+.warning {
+  color: #ff9800 !important;
+}
+
+.expiry-date {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1em;
+  margin-bottom: 15px;
+}
+
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.action-btn {
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
   cursor: pointer;
-  font-weight: 700;
-  transition: all 0.2s;
-  padding: 10px 20px;
-  border-radius: 100px;
+  transition: all 0.3s;
+  font-size: 16px;
+}
+
+.primary-btn {
   background: #2196f3;
   color: white;
-  border: 1px solid transparent;
-  display: flex;
-  align-items: center;
-  font-size: 15px;
-  margin: 10px auto 0;
 }
 
-button:hover {
+.secondary-btn {
+  background: #555;
+  color: white;
+}
+
+.danger-btn {
+  background: #ff4444;
+  color: white;
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.primary-btn:hover {
   background: #1976d2;
 }
 
-button:active {
-  transform: scale(0.95);
+.secondary-btn:hover {
+  background: #666;
+}
+
+.danger-btn:hover {
+  background: #cc0000;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: white;
+  font-size: 1.2em;
+}
+
+@media (max-width: 850px) {
+  .dashboard-container {
+    width: 95%;
+    padding: 25px;
+  }
+  
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .dashboard-container {
+    padding: 20px;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2em;
+  }
+  
+  .days-remaining {
+    font-size: 2.5em;
+  }
 }
 </style>
 </head>
 <body>
 <button class="home-btn" onclick="window.location.href='index.html'">Home</button>
 
-<section id="servizi">
-  <h2>I Nostri Piani</h2>
-  <div class="cards">
-    <div class="card">
-      <h3>Base</h3>
-      <p>Accesso alla sala e attrezzature standard.</p>
-      <p>€29 / mese</p>
-      <button onclick="vaiRegistrazione('Base')">Scegli</button>
+<div class="dashboard-container" id="dashboardContent">
+  <div class="dashboard-header">
+    <h1>La Tua Dashboard</h1>
+    <p class="welcome-message">Benvenuto nella tua area personale PowerGym</p>
+  </div>
+  
+  <div class="dashboard-content">
+    <div class="user-info">
+      <h2>I Tuoi Dati</h2>
+      <div class="info-item">
+        <span class="info-label">Nome Completo:</span>
+        <span class="info-value" id="userFullName">-</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Email:</span>
+        <span class="info-value" id="userEmail">-</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Data Registrazione:</span>
+        <span class="info-value" id="registrationDate">-</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">ID Utente:</span>
+        <span class="info-value" id="userId">-</span>
+      </div>
     </div>
-    <div class="card">
-      <h3>Pro</h3>
-      <p>Accesso completo, corsi inclusi e supporto mensile.</p>
-      <p>€49 / mese</p>
-      <button onclick="vaiRegistrazione('Pro')">Scegli</button>
-    </div>
-    <div class="card">
-      <h3>Premium</h3>
-      <p>Accesso totale, personal trainer e eventi esclusivi.</p>
-      <p>€69 / mese</p>
-      <button onclick="vaiRegistrazione('Premium')">Scegli</button>
-    </div>
-    <div class="card">
-      <h3>Annual Basic</h3>
-      <p>Accesso palestra tutti i giorni, corsi ed eventi con 4 schede.</p>
-      <p>€499 / anno</p>
-      <button onclick="vaiRegistrazione('Annual Basic')">Scegli</button>
-    </div>
-    <div class="card">
-      <h3>Annual Super</h3>
-      <p>Accesso palestra tutti i giorni, corsi, eventi, personal trainer, 5 schede e piano alimentazione personalizzato.</p>
-      <p>€799 / anno</p>
-      <button onclick="vaiRegistrazione('Annual Super')">Scegli</button>
+    
+    <div class="plan-info">
+      <h2>Il Tuo Abbonamento</h2>
+      <div class="info-item">
+        <span class="info-label">Piano Attivo:</span>
+        <span class="info-value" id="userPlanName">-</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Tariffa:</span>
+        <span class="info-value" id="userPlanPrice">-</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Tipo:</span>
+        <span class="info-value" id="planType">-</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Stato:</span>
+        <span class="info-value" id="planStatus">-</span>
+      </div>
     </div>
   </div>
-</section>
+  
+  <div class="plan-status">
+    <h2>Stato Abbonamento</h2>
+    <div class="current-plan" id="currentPlanName">-</div>
+    <div class="plan-description" id="currentPlanDescription">-</div>
+    <div class="days-remaining" id="daysRemaining">-</div>
+    <div class="expiry-date">Scadenza: <span id="planExpiryDate">-</span></div>
+  </div>
+  
+  <div class="dashboard-actions">
+    <button class="action-btn primary-btn" id="renewPlan">Rinnova Piano</button>
+    <button class="action-btn secondary-btn" id="changePlan">Cambia Piano</button>
+    <button class="action-btn danger-btn" id="logoutBtn">Esci</button>
+  </div>
+</div>
+
+<div class="loading" id="loadingMessage" style="display: none;">
+  <p>Caricamento dati utente...</p>
+</div>
 
 <script>
-function vaiRegistrazione(piano) {
-  window.location.href = `register.html?piano=${encodeURIComponent(piano)}`;
+// Carica i dati dell'utente quando la pagina si apre
+document.addEventListener('DOMContentLoaded', function() {
+  loadUserData();
+});
+
+function loadUserData() {
+  // Mostra loading
+  document.getElementById('loadingMessage').style.display = 'block';
+  document.getElementById('dashboardContent').style.display = 'none';
+  
+  // Recupera i dati dal localStorage
+  const savedUserData = localStorage.getItem('userData');
+  
+  if (savedUserData) {
+    const userData = JSON.parse(savedUserData);
+    
+    // Aggiorna la dashboard con i dati reali
+    updateDashboard(userData);
+    
+    // Nascondi loading e mostra dashboard
+    document.getElementById('loadingMessage').style.display = 'none';
+    document.getElementById('dashboardContent').style.display = 'block';
+  } else {
+    // Nessun dato utente trovato
+    document.getElementById('loadingMessage').innerHTML = `
+      <p>Nessun dato utente trovato.</p>
+      <p>Completa la registrazione per accedere alla dashboard.</p>
+      <button onclick="window.location.href='register.html'" style="margin-top: 20px; padding: 10px 20px; background: #2196f3; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Vai alla Registrazione
+      </button>
+    `;
+  }
 }
+
+function updateDashboard(userData) {
+  // Dati personali
+  document.getElementById('userFullName').textContent = `${userData.firstname} ${userData.lastname}`;
+  document.getElementById('userEmail').textContent = userData.email;
+  document.getElementById('registrationDate').textContent = userData.registrationDate;
+  document.getElementById('userId').textContent = `USR${Date.now().toString().slice(-6)}`;
+  
+  // Dati piano
+  if (userData.plan) {
+    document.getElementById('userPlanName').textContent = userData.plan.name;
+    document.getElementById('userPlanPrice').textContent = userData.plan.price;
+    document.getElementById('currentPlanName').textContent = userData.plan.name;
+    document.getElementById('currentPlanDescription').textContent = userData.plan.description;
+    
+    // Determina tipo piano
+    const planType = userData.plan.name.includes('Annual') ? 'Annuale' : 'Mensile';
+    document.getElementById('planType').textContent = planType;
+    document.getElementById('planStatus').textContent = 'Attivo';
+    
+    // Gestione scadenza
+    const expiryDate = new Date(userData.plan.expiryDate);
+    document.getElementById('planExpiryDate').textContent = expiryDate.toLocaleDateString('it-IT');
+    
+    // Calcola giorni rimanenti
+    updateDaysRemaining(expiryDate);
+  } else {
+    // Nessun piano attivo
+    document.getElementById('userPlanName').textContent = 'Nessun piano attivo';
+    document.getElementById('userPlanPrice').textContent = '-';
+    document.getElementById('currentPlanName').textContent = 'Nessun Abbonamento Attivo';
+    document.getElementById('currentPlanDescription').textContent = 'Scegli un piano per iniziare il tuo percorso fitness';
+    document.getElementById('planType').textContent = '-';
+    document.getElementById('planStatus').textContent = 'Inattivo';
+    document.getElementById('daysRemaining').textContent = '0 giorni';
+    document.getElementById('daysRemaining').className = 'days-remaining expired';
+    document.getElementById('planExpiryDate').textContent = '-';
+  }
+}
+
+function updateDaysRemaining(expiryDate) {
+  const now = new Date();
+  const diffTime = expiryDate - now;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  const daysElement = document.getElementById('daysRemaining');
+  
+  if (diffDays > 0) {
+    daysElement.textContent = `${diffDays} giorni`;
+    if (diffDays <= 7) {
+      daysElement.className = 'days-remaining warning';
+    } else {
+      daysElement.className = 'days-remaining';
+    }
+  } else {
+    daysElement.textContent = "SCADUTO";
+    daysElement.className = 'days-remaining expired';
+  }
+}
+
+// Gestione pulsanti
+document.getElementById('renewPlan').addEventListener('click', function() {
+  alert("Funzionalità di rinnovo piano disponibile presto!");
+});
+
+document.getElementById('changePlan').addEventListener('click', function() {
+  if (confirm("Vuoi cambiare piano? Sarai reindirizzato alla pagina dei piani.")) {
+    window.location.href = 'register.html';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', function() {
+  if (confirm("Sei sicuro di voler uscire?")) {
+    // Cancella i dati di sessione
+    localStorage.removeItem('userData');
+    window.location.href = 'index.html';
+  }
+});
+
+// Aggiorna il contatore ogni giorno
+setInterval(function() {
+  const savedUserData = localStorage.getItem('userData');
+  if (savedUserData) {
+    const userData = JSON.parse(savedUserData);
+    if (userData.plan) {
+      const expiryDate = new Date(userData.plan.expiryDate);
+      updateDaysRemaining(expiryDate);
+    }
+  }
+}, 24 * 60 * 60 * 1000);
 </script>
 </body>
 </html>
