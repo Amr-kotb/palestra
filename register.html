@@ -192,7 +192,7 @@ body::before {
 /* --- SEZIONE PIANI (DESTRA) --- */
 .plans-section {
   flex: 1;
-  display: flex;
+  display: none; /* NASCOSTA INIZIALMENTE */
   flex-direction: column;
   gap: 20px;
   max-width: 800px;
@@ -1182,9 +1182,9 @@ body::before {
               
               console.log("✅ Utente registrato con successo:", user.uid);
               
-              // Mostra la sezione piani
+              // CORREZIONE: NASCONDI FORM E MOSTRA PIANI
+              elements.formSection.style.display = 'none';
               elements.plansSection.style.display = 'flex';
-              alert('Registrazione completata! Ora scegli il tuo piano.');
               
           } catch (error) {
               console.error("❌ Errore durante la registrazione:", error);
@@ -1192,7 +1192,7 @@ body::before {
               
               switch(error.code) {
                   case 'auth/email-already-in-use':
-                      errorMessage += "Email già in uso";
+                      errorMessage += "Email già in uso. Usa un'altra email.";
                       break;
                   case 'auth/invalid-email':
                       errorMessage += "Email non valida";
@@ -1522,8 +1522,7 @@ body::before {
 
   // Inizializzazione
   document.addEventListener('DOMContentLoaded', function() {
-      // Nascondi inizialmente la sezione piani
-      elements.plansSection.style.display = 'none';
+      // La sezione piani è già nascosta per CSS
   });
 </script>
 </body>
