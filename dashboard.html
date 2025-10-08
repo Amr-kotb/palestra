@@ -347,7 +347,7 @@ function loadUserData() {
     document.getElementById('loadingMessage').style.display = 'none';
     document.getElementById('dashboardContent').style.display = 'block';
   } else {
-    // Nessun dato utente trovato
+    // Nessun dato utente trovato - reindirizza alla registrazione
     document.getElementById('loadingMessage').innerHTML = `
       <p>Nessun dato utente trovato.</p>
       <p>Completa la registrazione per accedere alla dashboard.</p>
@@ -441,7 +441,7 @@ setInterval(function() {
   const savedUserData = localStorage.getItem('userData');
   if (savedUserData) {
     const userData = JSON.parse(savedUserData);
-    if (userData.plan) {
+    if (userData.plan && userData.plan.expiryDate) {
       const expiryDate = new Date(userData.plan.expiryDate);
       updateDaysRemaining(expiryDate);
     }

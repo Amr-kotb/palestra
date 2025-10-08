@@ -1001,9 +1001,10 @@ body::before {
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <script>
+  // ✅ CONFIGURAZIONE FIREBASE CORRETTA
   const firebaseConfig = {
     apiKey: "AIzaSyDxbjc0jYzIBidTCA2lY0OtSioR8hz4bRs",
-    authDomain: "akotb-palestra-b6f81.firebasestorage.app",
+    authDomain: "akotb-palestra-b6f81.firebaseapp.com", // ✅ CORRETTO
     projectId: "akotb-palestra-b6f81",
     storageBucket: "akotb-palestra-b6f81.firebasestorage.app",
     messagingSenderId: "1088603444773",
@@ -1148,7 +1149,7 @@ body::before {
       return isValid;
   }
 
-  // --- GESTIONE SUBMIT FORM ---
+  // ✅ GESTIONE SUBMIT FORM SEMPLIFICATA
   elements.form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -1159,7 +1160,7 @@ body::before {
         submitBtn.disabled = true;
         
         try {
-            // Salva i dati dell'utente TEMPORANEAMENTE
+            // Salva i dati dell'utente temporaneamente
             userData = {
                 firstname: document.getElementById('firstname').value.trim(),
                 lastname: document.getElementById('lastname').value.trim(),
@@ -1168,43 +1169,17 @@ body::before {
                 registrationDate: new Date().toLocaleDateString('it-IT')
             };
             
-            // VERIFICA SE L'EMAIL ESISTE GIÀ (prima di registrare)
-            try {
-                await auth.signInWithEmailAndPassword(userData.email, "tempPassword123");
-                // Se arriva qui, l'email ESISTE già
-                alert("❌ Email già registrata. Usa un'altra email.");
-                return;
-            } catch (signInError) {
-                // Se l'email non esiste, procedi con la registrazione
-                if (signInError.code === 'auth/user-not-found') {
-                    // MOSTRA LA SEZIONE PIANI (prima della registrazione Firebase)
-                    elements.formSection.style.display = 'none';
-                    elements.plansSection.style.display = 'flex';
-                    
-                    // SALVA I DATI TEMPORANEAMENTE
-                    localStorage.setItem('tempUserData', JSON.stringify(userData));
-                    console.log("✅ Dati salvati, mostra sezione piani");
-                } else {
-                    throw signInError;
-                }
-            }
+            // ✅ MOSTRA SUBITO LA SEZIONE PIANI (SEMPLICE)
+            elements.formSection.style.display = 'none';
+            elements.plansSection.style.display = 'flex';
+            
+            // Salva i dati temporanei
+            localStorage.setItem('tempUserData', JSON.stringify(userData));
+            console.log("✅ Dati salvati, mostra sezione piani");
             
         } catch (error) {
             console.error("❌ Errore:", error);
-            let errorMessage = "Errore: ";
-            
-            switch(error.code) {
-                case 'auth/email-already-in-use':
-                    errorMessage += "Email già registrata";
-                    break;
-                case 'auth/invalid-email':
-                    errorMessage += "Email non valida";
-                    break;
-                default:
-                    errorMessage += error.message;
-            }
-            
-            alert(errorMessage);
+            alert("Errore: " + error.message);
         } finally {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
@@ -1256,7 +1231,12 @@ body::before {
             const user = userCredential.user;
             console.log("✅ Utente creato:", user.uid);
             
-            // 2. Salva dati in Firestore CON il piano scelto
+            // 2. VERIFICA CHE L'UTENTE SIA AUTENTICATO
+            if (!user) {
+                throw new Error("Utente non autenticato dopo la registrazione");
+            }
+            
+            // 3. Salva dati in Firestore CON il piano scelto
             await db.collection("users").doc(user.uid).set({
                 firstname: tempUserData.firstname,
                 lastname: tempUserData.lastname,
@@ -1273,7 +1253,7 @@ body::before {
             
             console.log("✅ Dati salvati in Firestore");
             
-            // 3. Procedi con la selezione visiva del piano
+            // 4. Procedi con la selezione visiva del piano
             if (currentSelectedPlan) {
                 currentSelectedPlan.classList.remove("selected");
                 currentSelectedPlan.querySelector(".choosePlan").style.display = "block";
@@ -1302,7 +1282,9 @@ body::before {
                 plan: { 
                     name: planName, 
                     description: planDescription, 
-                    price: planPrice 
+                    price: planPrice,
+                    startDate: new Date(),
+                    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
                 } 
             };
             
@@ -1317,7 +1299,7 @@ body::before {
             
             switch(error.code) {
                 case 'auth/email-already-in-use':
-                    errorMessage = "❌ Email già registrata. Usa un'altra email.";
+                    errorMessage = "❌ Email già registrata. Usa un'altra email o accedi con il tuo account.";
                     break;
                 case 'auth/invalid-email':
                     errorMessage = "❌ Email non valida";
@@ -1326,7 +1308,10 @@ body::before {
                     errorMessage = "❌ Password troppo debole (minimo 6 caratteri)";
                     break;
                 case 'auth/network-request-failed':
-                    errorMessage = "❌ Errore di connessione. Controlla internet.";
+                    errorMessage = "❌ Errore di connessione. Controlla la tua internet.";
+                    break;
+                case 'auth/invalid-login-credentials':
+                    errorMessage = "❌ Configurazione Firebase errata. Controlla authDomain.";
                     break;
                 default:
                     errorMessage = "❌ " + error.message;
@@ -1535,24 +1520,26 @@ body::before {
       }
   });
 
-function showDashboard() {
-  // PREPARA I DATI COMPLETI DELL'UTENTE
-  const userCompleteData = {
-    firstname: userData.firstname,
-    lastname: userData.lastname,
-    email: userData.email,
-    registrationDate: userData.registrationDate,
-    plan: userData.plan
-  };
-  
-  // SALVA NEL LOCALSTORAGE
-  localStorage.setItem('userData', JSON.stringify(userCompleteData));
-  
-  // REDIRECT ALLA DASHBOARD
-  window.location.href = 'dashboard.html';
-}
+  function showDashboard() {
+    // PREPARA I DATI COMPLETI DELL'UTENTE
+    const userCompleteData = {
+      firstname: userData.firstname,
+      lastname: userData.lastname,
+      email: userData.email,
+      registrationDate: userData.registrationDate,
+      plan: userData.plan
+    };
+    
+    // SALVA NEL LOCALSTORAGE
+    localStorage.setItem('userData', JSON.stringify(userCompleteData));
+    
+    // REDIRECT ALLA DASHBOARD
+    window.location.href = 'dashboard.html';
+  }
 
   function updateDaysRemaining() {
+      if (!userData.plan || !userData.plan.expiryDate) return;
+      
       const now = new Date();
       const expiry = new Date(userData.plan.expiryDate);
       const diffTime = expiry - now;
@@ -1583,20 +1570,29 @@ function showDashboard() {
       if (confirm("Sei sicuro di voler uscire?")) {
           try {
               await auth.signOut();
+              localStorage.removeItem('userData');
               window.location.href = 'index.html';
           } catch (error) {
               console.error("❌ Errore durante il logout:", error);
+              localStorage.removeItem('userData');
               window.location.href = 'index.html';
           }
       }
   });
 
-  // Aggiorna il contatore ogni giorno
-  setInterval(updateDaysRemaining, 24 * 60 * 60 * 1000);
+  // DEBUG: Controllo stato autenticazione
+  auth.onAuthStateChanged((user) => {
+      if (user) {
+          console.log("✅ Utente autenticato:", user.email);
+          console.log("✅ UID:", user.uid);
+      } else {
+          console.log("❌ Nessun utente autenticato");
+      }
+  });
 
   // Inizializzazione
   document.addEventListener('DOMContentLoaded', function() {
-      // La sezione piani è già nascosta per CSS
+      console.log("✅ Pagina caricata correttamente");
   });
 </script>
 </body>
