@@ -957,74 +957,77 @@ body::before {
 
   <!-- SEZIONE PIANI (DESTRA) -->
   <div class="plans-section" id="plansSection">
-      <!-- CONTENITORE PIANI -->
-        <!-- ABBONAMENTI MENSILI -->
-        <div class="card">
-          <h3>Base</h3>
-          <p>Accesso sala e attrezzature standard</p>
-          <p>Orario ridotto (6:00-22:00)</p>
-          <p>Accesso a docce e spogliatoi</p>
-          <div class="price">€29 / mese</div>
-          <button onclick="selectPlan('Base', '29')">Scegli</button>
-        </div>
-
-        <div class="card">
-          <h3>Pro</h3>
-          <p>Accesso completo a tutte le aree</p>
-          <p>Corsi di gruppo inclusi</p>
-          <p>Orario esteso (5:00-24:00)</p>
-          <div class="price">€49 / mese</div>
-          <button onclick="selectPlan('Pro', '49')">Scegli</button>
-        </div>
-
-        <div class="card">
-          <h3>Premium</h3>
-          <p>Personal trainer incluso</p>
-          <p>Eventi esclusivi per membri</p>
-          <p>Accesso illimitato 24/7</p>
-          <div class="price">€69 / mese</div>
-          <button onclick="selectPlan('Premium', '69')">Scegli</button>
-        </div>
-
-         <!-- ABBONAMENTI ANNUALI -->
-        <div class="card">
-          <div class="annual-badge">ANNUALE</div>
-          <h3>Power Annual</h3>
-          <p>Tutti i benefici Premium</p>
-          <p>2 mesi gratuiti</p>
-          <p>Check-up fitness trimestrale</p>
-          <p>Accesso area VIP</p>
-          <div class="price">€599 / anno</div>
-          <div class="savings">Risparmi €229!</div>
-          <button onclick="selectPlan('Power Annual', '599')">Scegli</button>
-        </div>
-
-        <div class="card">
-          <div class="annual-badge">ANNUALE</div>
-          <h3>Elite Annual</h3>
-          <p>Servizio Premium completo</p>
-          <p>Nutrizionista incluso</p>
-          <p>Massaggio mensile</p>
-          <p>Ingresso per un ospite</p>
-          <div class="price">€899 / anno</div>
-          <div class="savings">Risparmi €329!</div>
-          <button onclick="selectPlan('Elite Annual', '899')">Scegli</button>
-        </div>
-
-      <!-- CONTENITORE PIANO SELEZIONATO -->
-      <div class="selected-plan-container" id="selectedPlanContainer">
-          <div class="selected-plan" id="selectedPlan">
-              <h3 id="selectedPlanName">Base</h3>
-              <p id="selectedPlanDescription">Accesso alla palestra</p>
-              <p><strong id="selectedPlanPrice">€29/mese</strong></p>
-          </div>
-
-          <!-- PULSANTI PAGAMENTO -->
-          <div id="paymentButtons">
-            <button id="goPayment">Vai al pagamento</button>
-            <button id="reviewPlans">Rivedi i piani</button>
-          </div>
+    <!-- CONTENITORE PIANI -->
+    <div class="plans-container" id="plansContainer">
+      <!-- PIANO BASE -->
+      <div class="plan" data-plan="Base" data-description="Accesso sala e attrezzature standard, Orario ridotto (6:00-22:00), Accesso a docce e spogliatoi" data-price="€29/mese">
+        <h3>Base</h3>
+        <p>Accesso sala e attrezzature standard</p>
+        <p>Orario ridotto (6:00-22:00)</p>
+        <p>Accesso a docce e spogliatoi</p>
+        <strong>€29 / mese</strong>
+        <button class="choosePlan">Scegli</button>
       </div>
+
+      <!-- PIANO PRO -->
+      <div class="plan" data-plan="Pro" data-description="Accesso completo a tutte le aree, Corsi di gruppo inclusi, Orario esteso (5:00-24:00)" data-price="€49/mese">
+        <h3>Pro</h3>
+        <p>Accesso completo a tutte le aree</p>
+        <p>Corsi di gruppo inclusi</p>
+        <p>Orario esteso (5:00-24:00)</p>
+        <strong>€49 / mese</strong>
+        <button class="choosePlan">Scegli</button>
+      </div>
+
+      <!-- PIANO PREMIUM -->
+      <div class="plan" data-plan="Premium" data-description="Personal trainer incluso, Eventi esclusivi per membri, Accesso illimitato 24/7" data-price="€69/mese">
+        <h3>Premium</h3>
+        <p>Personal trainer incluso</p>
+        <p>Eventi esclusivi per membri</p>
+        <p>Accesso illimitato 24/7</p>
+        <strong>€69 / mese</strong>
+        <button class="choosePlan">Scegli</button>
+      </div>
+
+      <!-- PIANO POWER ANNUAL -->
+      <div class="plan" data-plan="Power Annual" data-description="Tutti i benefici Premium, 2 mesi gratuiti, Check-up fitness trimestrale, Accesso area VIP" data-price="€599/anno">
+        <h3>Power Annual</h3>
+        <p>Tutti i benefici Premium</p>
+        <p>2 mesi gratuiti</p>
+        <p>Check-up fitness trimestrale</p>
+        <p>Accesso area VIP</p>
+        <strong>€599 / anno</strong>
+        <div style="color: #ff6b8b; font-weight: bold; margin: 10px 0;">Risparmi €229!</div>
+        <button class="choosePlan">Scegli</button>
+      </div>
+
+      <!-- PIANO ELITE ANNUAL -->
+      <div class="plan" data-plan="Elite Annual" data-description="Servizio Premium completo, Nutrizionista incluso, Massaggio mensile, Ingresso per un ospite" data-price="€899/anno">
+        <h3>Elite Annual</h3>
+        <p>Servizio Premium completo</p>
+        <p>Nutrizionista incluso</p>
+        <p>Massaggio mensile</p>
+        <p>Ingresso per un ospite</p>
+        <strong>€899 / anno</strong>
+        <div style="color: #ff6b8b; font-weight: bold; margin: 10px 0;">Risparmi €329!</div>
+        <button class="choosePlan">Scegli</button>
+      </div>
+    </div>
+
+    <!-- CONTENITORE PIANO SELEZIONATO -->
+    <div class="selected-plan-container" id="selectedPlanContainer">
+      <div class="selected-plan" id="selectedPlan">
+        <h3 id="selectedPlanName">Base</h3>
+        <p id="selectedPlanDescription">Accesso alla palestra</p>
+        <p><strong id="selectedPlanPrice">€29/mese</strong></p>
+      </div>
+
+      <!-- PULSANTI PAGAMENTO -->
+      <div id="paymentButtons">
+        <button id="goPayment">Vai al pagamento</button>
+        <button id="reviewPlans">Rivedi i piani</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1245,7 +1248,7 @@ body::before {
       return isValid;
   }
 
-  // ✅ GESTIONE SUBMIT FORM SEMPLIFICATA
+  // ✅ GESTIONE SUBMIT FORM CORRETTA
   elements.form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -1296,10 +1299,10 @@ body::before {
       elements.toggleConfirmPassword.textContent = type === "password" ? "Mostra" : "Nascondi";
   });
 
-  // ✅ FUNZIONE COMPLETA PER SELEZIONE PIANI
+  // ✅ FUNZIONE COMPLETA PER SELEZIONE PIANI E REGISTRAZIONE
   elements.chooseButtons.forEach(btn => {
-    btn.addEventListener("click", async () => {
-        const planDiv = btn.parentElement;
+    btn.addEventListener("click", async function() {
+        const planDiv = this.parentElement;
         const planName = planDiv.getAttribute("data-plan");
         const planDescription = planDiv.getAttribute("data-description");
         const planPrice = planDiv.getAttribute("data-price");
@@ -1312,7 +1315,7 @@ body::before {
             return;
         }
         
-        const chooseBtn = btn;
+        const chooseBtn = this;
         const originalText = chooseBtn.textContent;
         chooseBtn.textContent = 'Registrando...';
         chooseBtn.disabled = true;
@@ -1330,24 +1333,26 @@ body::before {
             console.log("✅ Utente Firebase creato:", user.uid);
             
             // 2. SALVA DATI IN FIRESTORE
-            await db.collection("users").doc(user.uid).set({
+            const userDoc = {
                 firstname: tempUserData.firstname,
                 lastname: tempUserData.lastname,
                 email: tempUserData.email,
-                registrationDate: new Date(),
+                registrationDate: firebase.firestore.FieldValue.serverTimestamp(),
                 plan: {
                     name: planName,
                     description: planDescription,
                     price: planPrice,
-                    startDate: new Date(),
+                    startDate: firebase.firestore.FieldValue.serverTimestamp(),
                     expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
                 }
-            });
+            };
             
+            await db.collection("users").doc(user.uid).set(userDoc);
             console.log("✅ Dati salvati in Firestore");
 
-            // 3. ✅ SALVA I DATI COMPLETI NEL LOCALSTORAGE IMMEDIATAMENTE
+            // 3. ✅ SALVA I DATI COMPLETI NEL LOCALSTORAGE
             const completeUserData = {
+                uid: user.uid,
                 firstname: tempUserData.firstname,
                 lastname: tempUserData.lastname,
                 email: tempUserData.email,
@@ -1394,20 +1399,6 @@ body::before {
             localStorage.removeItem('tempUserData');
             
             console.log("✅ Registrazione completata! Utente pronto per il pagamento.");
-            
-            // ✅ PROCEEDI AUTOMATICAMENTE AL PAGAMENTO DOPO 1 SECONDO
-            setTimeout(() => {
-                // Aggiorna i dettagli del pagamento
-                elements.paymentPlanName.textContent = planName;
-                elements.paymentPlanDescription.textContent = planDescription;
-                elements.paymentPlanPrice.textContent = planPrice;
-                
-                // Nascondi tutto e mostra pagamento
-                elements.mainContainer.style.display = "none";
-                elements.paymentPage.style.display = "block";
-                
-                console.log("🚀 Procedendo automaticamente al pagamento per il piano:", planName);
-            }, 1000);
             
         } catch (error) {
             console.error("❌ Errore registrazione:", error);
@@ -1605,11 +1596,24 @@ body::before {
       try {
           console.log("💳 Processando pagamento...");
           
-          // ✅ AGGIORNA I DATI NEL LOCALSTORAGE CON STATO PAGAMENTO
+          // ✅ AGGIORNA I DATI NEL FIRESTORE CON STATO PAGAMENTO
+          const user = auth.currentUser;
+          if (user) {
+              await db.collection("users").doc(user.uid).update({
+                  paymentCompleted: true,
+                  paymentDate: firebase.firestore.FieldValue.serverTimestamp(),
+                  'plan.status': 'active'
+              });
+              
+              console.log("✅ Pagamento confermato in Firestore");
+          }
+          
+          // ✅ AGGIORNA LOCALSTORAGE
           const savedUserData = JSON.parse(localStorage.getItem('userData'));
           if (savedUserData) {
               savedUserData.paymentCompleted = true;
               savedUserData.paymentDate = new Date().toLocaleDateString('it-IT');
+              savedUserData.plan.status = 'active';
               localStorage.setItem('userData', JSON.stringify(savedUserData));
           }
           
@@ -1628,6 +1632,11 @@ body::before {
       if (user) {
           console.log("✅ Utente autenticato:", user.email);
           console.log("✅ UID:", user.uid);
+          
+          // Se l'utente è già loggato, salva i dati
+          user.getIdToken().then(() => {
+              console.log("✅ Token di autenticazione valido");
+          });
       } else {
           console.log("❌ Nessun utente autenticato");
       }
@@ -1636,6 +1645,13 @@ body::before {
   // Inizializzazione
   document.addEventListener('DOMContentLoaded', function() {
       console.log("✅ Pagina di registrazione caricata correttamente");
+      
+      // Verifica se c'è un utente già loggato
+      auth.onAuthStateChanged((user) => {
+          if (user) {
+              console.log("Utente già autenticato:", user.email);
+          }
+      });
   });
 </script>
 </body>

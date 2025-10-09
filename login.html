@@ -269,7 +269,7 @@ body::before {
 </head>
 <body>
 <!-- Pulsante Home -->
-<button class="home-btn" onclick="window.location.href='index.html'">  Home</button>
+<button class="home-btn" onclick="window.location.href='index.html'">Home</button>
 
 <!-- Form Login -->
 <div class="wrapper">
@@ -305,9 +305,10 @@ body::before {
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <script>
+  // ✅ CONFIGURAZIONE FIREBASE CORRETTA (UGUALE ALLA REGISTRAZIONE)
   const firebaseConfig = {
     apiKey: "AIzaSyDxbjc0jYzIBidTCA2lY0OtSioR8hz4bRs",
-    authDomain: "akotb-palestra-b6f81.firebasestorage.app",
+    authDomain: "akotb-palestra-b6f81.firebaseapp.com",
     projectId: "akotb-palestra-b6f81",
     storageBucket: "akotb-palestra-b6f81.firebasestorage.app",
     messagingSenderId: "1088603444773",
@@ -317,6 +318,8 @@ body::before {
   const app = firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
+
+  console.log("✅ Firebase Login connesso correttamente!");
 
   // Elementi DOM
   const loginForm = document.getElementById('loginForm');
@@ -364,7 +367,7 @@ body::before {
       return emailRegex.test(email);
   }
 
-  // Gestione submit del form
+  // ✅ GESTIONE LOGIN MIGLIORATA
   loginForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       
@@ -375,40 +378,76 @@ body::before {
           loginBtn.disabled = true;
           
           try {
+              console.log("🔐 Tentativo di login per:", usernameInput.value.trim());
+              
               const userCredential = await auth.signInWithEmailAndPassword(
                   usernameInput.value.trim(), 
                   passwordInput.value
               );
               
-              // Salva "Ricordami"
-              if (rememberMe.checked) {
-                  localStorage.setItem('rememberMe', 'true');
-                  localStorage.setItem('userEmail', usernameInput.value.trim());
+              const user = userCredential.user;
+              console.log("✅ Login effettuato per:", user.email);
+              console.log("✅ UID:", user.uid);
+              
+              // ✅ RECUPERA I DATI UTENTE DA FIRESTORE
+              const userDoc = await db.collection("users").doc(user.uid).get();
+              
+              if (userDoc.exists) {
+                  const userData = userDoc.data();
+                  console.log("✅ Dati utente recuperati:", userData);
+                  
+                  // ✅ SALVA I DATI COMPLETI NEL LOCALSTORAGE
+                  const completeUserData = {
+                      uid: user.uid,
+                      firstname: userData.firstname,
+                      lastname: userData.lastname,
+                      email: userData.email,
+                      registrationDate: userData.registrationDate?.toDate?.() || new Date(),
+                      plan: userData.plan || {},
+                      paymentCompleted: userData.paymentCompleted || false
+                  };
+                  
+                  localStorage.setItem('userData', JSON.stringify(completeUserData));
+                  console.log("✅ Dati salvati nel localStorage");
+                  
+                  // Salva "Ricordami"
+                  if (rememberMe.checked) {
+                      localStorage.setItem('rememberMe', 'true');
+                      localStorage.setItem('userEmail', usernameInput.value.trim());
+                  } else {
+                      localStorage.removeItem('rememberMe');
+                      localStorage.removeItem('userEmail');
+                  }
+                  
+                  alert('✅ Login effettuato con successo!');
+                  window.location.href = 'dashboard.html';
+                  
               } else {
-                  localStorage.removeItem('rememberMe');
-                  localStorage.removeItem('userEmail');
+                  throw new Error("Dati utente non trovati nel database");
               }
               
-              alert('Login effettuato con successo!');
-              window.location.href = 'dashboard.html';
-              
           } catch (error) {
-              console.error('Errore login:', error);
+              console.error('❌ Errore login:', error);
               let errorMessage = 'Credenziali non valide';
               
               switch(error.code) {
                   case 'auth/user-not-found':
-                      errorMessage = 'Utente non trovato';
+                      errorMessage = '❌ Utente non trovato. Registrati prima.';
                       break;
                   case 'auth/wrong-password':
-                      errorMessage = 'Password errata';
+                      errorMessage = '❌ Password errata';
                       break;
                   case 'auth/invalid-email':
-                      errorMessage = 'Email non valida';
+                      errorMessage = '❌ Email non valida';
                       break;
                   case 'auth/too-many-requests':
-                      errorMessage = 'Troppi tentativi. Riprova più tardi';
+                      errorMessage = '❌ Troppi tentativi. Riprova più tardi';
                       break;
+                  case 'auth/network-request-failed':
+                      errorMessage = '❌ Errore di connessione. Controlla internet.';
+                      break;
+                  default:
+                      errorMessage = '❌ Errore: ' + error.message;
               }
               
               alert(errorMessage);
@@ -419,7 +458,7 @@ body::before {
       }
   });
 
-  // Password dimenticata
+  // ✅ PASSWORD DIMENTICATA
   forgotPassword.addEventListener('click', async function(e) {
       e.preventDefault();
       const email = prompt('Inserisci la tua email per reimpostare la password:');
@@ -427,12 +466,12 @@ body::before {
       if (email && isValidEmail(email)) {
           try {
               await auth.sendPasswordResetEmail(email);
-              alert(`Email di recupero inviata a: ${email}`);
+              alert(`✅ Email di recupero inviata a: ${email}`);
           } catch (error) {
-              alert('Errore nell\'invio dell\'email di recupero: ' + error.message);
+              alert('❌ Errore nell\'invio dell\'email di recupero: ' + error.message);
           }
       } else {
-          alert('Inserisci un indirizzo email valido.');
+          alert('❌ Inserisci un indirizzo email valido.');
       }
   });
 
@@ -454,6 +493,13 @@ body::before {
 
   passwordInput.addEventListener('input', function() {
       passwordError.style.display = 'none';
+  });
+
+  // DEBUG: Controllo stato autenticazione
+  auth.onAuthStateChanged((user) => {
+      if (user) {
+          console.log("✅ Utente già autenticato:", user.email);
+      }
   });
 </script>
 </body>
